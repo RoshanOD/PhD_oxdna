@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#PBS -l walltime=09:30:00
+#PBS -l select=1:ncpus=1:mem=2gb
+
+#tips-must load anaconda3/personal, activate it, in the bash files
+#when naming variables, no spaces
+#in a loop, use C++ syntax, change variable name inside the loop
+#still didn't fix the issue where cp copies init inside RUN1 if RUN1 already exists
+start=$(date +%s.%N)
+
+module load oxdna
+# module load intel-suite
+module load fix_unwritable_tmp
+module load anaconda3/personal
+source activate py27
+
+cd $PBS_O_WORKDIR
+echo $PBS_O_WORKDIR
+analysis_file="/rds/general/user/rjo20/home/oxdna_work/MC/18mer_trap/analysis_file.py"
+template="/rds/general/user/rjo20/home/oxdna_work/MC/18mer_trap/init"
+
+N_start=1
+num_its_minus_one=4
+for (( i = $N_start; i <= $(($N_start+$num_its_minus_one)); i++ ))
+do
+curr_subdir="RUN$i"
+curr_dir="/rds/general/user/rjo20/home/oxdna_work/MC/18mer_trap/$curr_subdir"
+#echo $i
+echo $curr_subdir # look in output files e.g. 'test_submit.pbsb.o276679'
+#echo $curr_dir
+
+## Check if directory exists
+if [[ -f $curr_dir ]]
+then
+    echo "$curr_dir already exists"
+else
+    cp -ir $template $curr_dir #makes the new directory
+fi
+
+cd $curr_dir
+python $analysis_file -N $i
+
+input_file="$curr_dir/input"
+run_oxdna="oxDNA $input_file"
+#timeout 20 $run_oxdna
+$run_oxdna
+
+done
+
+duration=$(echo "$(date +%s.%N) - $start" | bc)
+execution_time=`printf "%.2f seconds" $duration`
+echo "Script Execution Time: $execution_time"
+
+exit 0
