@@ -3,10 +3,11 @@
 #PBS -l walltime=09:30:00
 #PBS -l select=1:ncpus=1:mem=2gb
 
-#tips-must load anaconda3/personal, activate it, in the bash files
-#when naming variables, no spaces
-#in a loop, use C++ syntax, change variable name inside the loop
-#still didn't fix the issue where cp copies init inside RUN1 if RUN1 already exists
+# Must load anaconda3/personal, activate it, in the bash files
+# No spaces w/ variables
+# C++ syntax for loop
+# Fix cp error
+
 start=$(date +%s.%N)
 
 module load oxdna
@@ -43,7 +44,7 @@ python $analysis_file -N $i
 
 input_file="$curr_dir/input"
 run_oxdna="oxDNA $input_file"
-#timeout 20 $run_oxdna
+#timeout 20 $run_oxdna             #Test 
 $run_oxdna
 
 done
