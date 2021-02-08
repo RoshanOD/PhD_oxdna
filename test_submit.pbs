@@ -4,8 +4,6 @@
 #PBS -l select=1:ncpus=1:mem=2gb
 
 # Must load anaconda3/personal, activate it, in the bash files
-# No spaces w/ variables
-# C++ syntax for loop
 # Fix cp error
 
 start=$(date +%s.%N)
@@ -31,7 +29,6 @@ curr_dir="/rds/general/user/rjo20/home/oxdna_work/MC/18mer_trap/$curr_subdir"
 echo $curr_subdir # look in output files e.g. 'test_submit.pbsb.o276679'
 #echo $curr_dir
 
-## Check if directory exists
 if [[ -f $curr_dir ]]
 then
     echo "$curr_dir already exists"
